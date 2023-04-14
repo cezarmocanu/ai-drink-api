@@ -1,10 +1,10 @@
-package com.toriumsystems.taskmanager;
+package com.toriumsystems.aidrink;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SemicolonApiApplicationTests {
+class AIDrinkApiApplicationTests {
 
 	@Test
 	void contextLoads() {

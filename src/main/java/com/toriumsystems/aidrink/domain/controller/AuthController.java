@@ -1,4 +1,4 @@
-package com.toriumsystems.aidrink.identity.controller;
+package com.toriumsystems.aidrink.domain.controller;
 
 import java.util.HashMap;
 
@@ -22,6 +22,13 @@ record JwtTokenDTO(String token) {
 public class AuthController {
 
     private JwtTokenService jwtService;
+
+    @PostMapping("/signup")
+    public String signUp() {
+        // var userDetails = (UserIdentityDetails) authentication.getPrincipal();
+        // String token = jwtService.generateToken(new HashMap<>(), userDetails);
+        return "ok";
+    }
 
     @PostMapping("/login")
     public ResponseEntity<JwtTokenDTO> login(Authentication authentication) {

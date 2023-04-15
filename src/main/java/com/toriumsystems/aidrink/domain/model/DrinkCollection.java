@@ -26,6 +26,6 @@ public class DrinkCollection extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "collection")
+    @OneToMany(mappedBy = "drinkCollection")
     private List<DrinkCollectionEntry> entries;
 }

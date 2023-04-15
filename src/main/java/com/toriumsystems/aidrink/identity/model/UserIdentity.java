@@ -2,6 +2,7 @@ package com.toriumsystems.aidrink.identity.model;
 
 import java.util.List;
 
+import com.toriumsystems.aidrink.domain.model.Profile;
 import com.toriumsystems.aidrink.identity.audit.Auditable;
 
 import jakarta.persistence.Column;
@@ -10,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,4 +43,7 @@ public class UserIdentity extends Auditable {
 
     @OneToMany(mappedBy = "identity")
     private List<JwtToken> tokens;
+
+    @OneToOne(mappedBy = "identity")
+    private Profile profile;
 }

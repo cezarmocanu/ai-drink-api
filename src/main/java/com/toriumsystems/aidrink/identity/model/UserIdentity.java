@@ -17,12 +17,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Builder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class UserIdentity extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +42,10 @@ public class UserIdentity extends Auditable {
 
     @NotBlank
     private String password;
+
+    @NotBlank
+    @Builder.Default
+    private Boolean isGuestAccount = true;
 
     @OneToMany(mappedBy = "identity")
     private List<JwtToken> tokens;

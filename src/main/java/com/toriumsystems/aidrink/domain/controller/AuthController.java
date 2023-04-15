@@ -2,15 +2,26 @@ package com.toriumsystems.aidrink.domain.controller;
 
 import java.util.HashMap;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.toriumsystems.aidrink.domain.dto.AuthNewIdentityDTO;
+import com.toriumsystems.aidrink.domain.dto.AuthSignupDTO;
+import com.toriumsystems.aidrink.domain.service.UserIdentityService;
+import com.toriumsystems.aidrink.identity.model.UserIdentity;
 import com.toriumsystems.aidrink.identity.model.UserIdentityDetails;
 import com.toriumsystems.aidrink.identity.service.JwtTokenService;
 
+import jakarta.annotation.security.PermitAll;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 record JwtTokenDTO(String token) {
@@ -21,13 +32,24 @@ record JwtTokenDTO(String token) {
 @AllArgsConstructor
 public class AuthController {
 
+    private UserIdentityService userIdentityService;
     private JwtTokenService jwtService;
 
     @PostMapping("/signup")
-    public String signUp() {
-        // var userDetails = (UserIdentityDetails) authentication.getPrincipal();
-        // String token = jwtService.generateToken(new HashMap<>(), userDetails);
-        return "ok";
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<AuthNewIdentityDTO> signUp(@Valid @RequestBody AuthNewIdentityDTO dto) {
+        var identity = userIdentityService.createUser(dto);
+        var userDetails = UserIdentityDetails
+                .builder()
+                .identity(identity)
+                .build();
+        var token = jwtService.generateToken(new HashMap<>(), userDetails);
+        var responseDto = AuthNewIdentityDTO
+                .builder()
+                .identity(userIdentityService.mapUserIdentityToGetDTO(identity))
+                .token(token)
+                .build();
+        return new ResponseEntity<>(null, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
@@ -41,7 +63,7 @@ public class AuthController {
     public ResponseEntity<String> logout(Authentication authentication) {
         String token = (String) authentication.getCredentials();
         jwtService.revokeToken(token);
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok("Token revoked successfully");
     }
 
 }

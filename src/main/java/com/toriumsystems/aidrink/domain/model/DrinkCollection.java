@@ -1,5 +1,6 @@
 package com.toriumsystems.aidrink.domain.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.toriumsystems.aidrink.identity.audit.Auditable;
@@ -27,5 +28,6 @@ public class DrinkCollection extends Auditable {
     private Long id;
 
     @OneToMany(mappedBy = "drinkCollection")
-    private List<DrinkCollectionEntry> entries;
+    @Builder.Default
+    private List<DrinkCollectionEntry> entries = new ArrayList<>();
 }

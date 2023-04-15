@@ -31,8 +31,8 @@ public class SecurityConfiguration {
         return http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/v1/auth/signup").permitAll()
                 .requestMatchers("/error/**").permitAll()
+                .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated())
-
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(csrf -> csrf.disable())
                 .cors(withDefaults())

@@ -44,6 +44,10 @@ public class JwtAuthenticationAspect {
                     .getRequest();
             String route = request.getRequestURI();
 
+            if (route.equals("/api/swagger-ui/index.html")) {
+                return joinPoint.proceed();
+            }
+
             if (!route.equals("/api/v1/auth/login")) {
                 return ResponseEntity
                         .status(HttpStatus.UNAUTHORIZED)

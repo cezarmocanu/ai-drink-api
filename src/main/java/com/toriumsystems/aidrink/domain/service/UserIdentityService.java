@@ -2,6 +2,7 @@ package com.toriumsystems.aidrink.domain.service;
 
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.toriumsystems.aidrink.domain.dto.AuthSignupDTO;

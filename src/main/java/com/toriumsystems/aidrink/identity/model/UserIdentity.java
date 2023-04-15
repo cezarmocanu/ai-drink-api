@@ -43,7 +43,6 @@ public class UserIdentity extends Auditable {
     @NotBlank
     private String password;
 
-    @NotBlank
     @Builder.Default
     private Boolean isGuestAccount = true;
 

@@ -2,6 +2,7 @@ package com.toriumsystems.aidrink.domain.controller;
 
 import java.util.HashMap;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import com.toriumsystems.aidrink.identity.model.UserIdentityDetails;
 import com.toriumsystems.aidrink.identity.service.JwtTokenService;
 
 import jakarta.annotation.security.PermitAll;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -36,8 +38,8 @@ public class AuthController {
     private JwtTokenService jwtService;
 
     @PostMapping("/signup")
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<AuthNewIdentityDTO> signUp(@Valid @RequestBody AuthNewIdentityDTO dto) {
+    public ResponseEntity<AuthNewIdentityDTO> signUp(@Valid @RequestBody AuthSignupDTO dto) {
+        // TODO handle constraints exception with error
         var identity = userIdentityService.createUser(dto);
         var userDetails = UserIdentityDetails
                 .builder()
@@ -49,7 +51,7 @@ public class AuthController {
                 .identity(userIdentityService.mapUserIdentityToGetDTO(identity))
                 .token(token)
                 .build();
-        return new ResponseEntity<>(null, HttpStatus.CREATED);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")

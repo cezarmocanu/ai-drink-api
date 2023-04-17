@@ -30,4 +30,10 @@ public class Profile extends Auditable {
 
     @OneToOne
     private DrinkCollection drinkCollection;
+
+    @Builder.Default
+    private Integer initialPageIndex = 0;
+
+    @Builder.Default
+    private Integer currentPageIndex = 0;
 }

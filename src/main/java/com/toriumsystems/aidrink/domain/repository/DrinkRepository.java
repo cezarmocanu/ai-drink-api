@@ -6,4 +6,5 @@ import com.toriumsystems.aidrink.domain.model.Drink;
 
 public interface DrinkRepository extends PagingAndSortingRepository<Drink, Long> {
 
+    Integer count();
 }

@@ -2,6 +2,7 @@ package com.toriumsystems.aidrink.domain.service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.stereotype.Service;
 
@@ -18,16 +19,19 @@ import com.toriumsystems.aidrink.identity.repository.UserIdentityRepository;
 import com.toriumsystems.aidrink.identity.service.JwtTokenService;
 
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserIdentityService {
 
-    private JwtTokenService jwtService;
-    private UserIdentityRepository userIdentityRepository;
-    private DrinkCollectionRepository drinkCollectionRepository;
-    private ProfileRepository profileRepository;
+    private final UserIdentityRepository userIdentityRepository;
+    private final DrinkCollectionRepository drinkCollectionRepository;
+    private final ProfileRepository profileRepository;
+    private final JwtTokenService jwtService;
+    private final DrinkService drinkService;
+
+    private Random random = new Random();
 
     public List<UserIdentityGetDTO> getAllIdentities() {
         var identities = userIdentityRepository.findAll();
@@ -58,10 +62,13 @@ public class UserIdentityService {
                 .build();
         var drinkCollection = drinkCollectionRepository.save(drinkCollectionBuilder);
 
+        var initialPageIndex = random.nextInt(drinkService.getPagesCount(10));
         var profileBuilder = Profile
                 .builder()
                 .identity(identity)
                 .drinkCollection(drinkCollection)
+                .currentPageIndex(initialPageIndex)
+                .initialPageIndex(initialPageIndex)
                 .build();
         var profile = profileRepository.save(profileBuilder);
 

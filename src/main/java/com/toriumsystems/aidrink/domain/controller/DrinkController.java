@@ -26,6 +26,6 @@ public class DrinkController {
     public ResponseEntity<List<DrinkGetDTO>> getAllDrinks(@IdentityId Long identityId) {
         var profile = profileRepository.findByIdentityId(identityId);
         var pageIndex = profile.getCurrentPageIndex() != null ? profile.getCurrentPageIndex() : 0;
-        return ResponseEntity.ok(drinkService.getShuffledDrinksByPage(pageIndex, 10));
+        return ResponseEntity.ok(drinkService.getDrinksByPage(pageIndex, 10));
     }
 }

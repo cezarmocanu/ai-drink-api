@@ -1,18 +1,21 @@
 package com.toriumsystems.aidrink.domain.service;
 
+import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import com.toriumsystems.aidrink.domain.dto.AuthSignupDTO;
+import com.toriumsystems.aidrink.domain.dto.AuthIdentityResponseDTO;
+import com.toriumsystems.aidrink.domain.dto.AuthIdentityRequestDTO;
 import com.toriumsystems.aidrink.domain.dto.UserIdentityGetDTO;
 import com.toriumsystems.aidrink.domain.model.DrinkCollection;
 import com.toriumsystems.aidrink.domain.model.Profile;
 import com.toriumsystems.aidrink.domain.repository.DrinkCollectionRepository;
 import com.toriumsystems.aidrink.domain.repository.ProfileRepository;
 import com.toriumsystems.aidrink.identity.model.UserIdentity;
+import com.toriumsystems.aidrink.identity.model.UserIdentityDetails;
 import com.toriumsystems.aidrink.identity.repository.UserIdentityRepository;
+import com.toriumsystems.aidrink.identity.service.JwtTokenService;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -21,6 +24,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserIdentityService {
 
+    private JwtTokenService jwtService;
     private UserIdentityRepository userIdentityRepository;
     private DrinkCollectionRepository drinkCollectionRepository;
     private ProfileRepository profileRepository;
@@ -35,8 +39,12 @@ public class UserIdentityService {
         return mapUserIdentitiListToGetDTOList(identities);
     }
 
+    public UserIdentity findByEmail(String email) {
+        return userIdentityRepository.findByEmail(email);
+    }
+
     @Transactional
-    public UserIdentity createUser(AuthSignupDTO dto) {
+    public UserIdentity createUser(AuthIdentityRequestDTO dto) {
         var identityBuilder = UserIdentity
                 .builder()
                 .email(dto.getId())
@@ -62,6 +70,19 @@ public class UserIdentityService {
         return identity;
     }
 
+    public AuthIdentityResponseDTO createNewIdentityDTO(UserIdentity identity) {
+        var userDetails = UserIdentityDetails
+                .builder()
+                .identity(identity)
+                .build();
+        var token = jwtService.generateToken(new HashMap<>(), userDetails);
+        return AuthIdentityResponseDTO
+                .builder()
+                .identity(mapUserIdentityToGetDTO(identity))
+                .token(token)
+                .build();
+    }
+
     public List<UserIdentityGetDTO> mapUserIdentitiListToGetDTOList(List<UserIdentity> userIdentities) {
         return userIdentities
                 .stream()
@@ -80,6 +101,7 @@ public class UserIdentityService {
                 .email(identity.getEmail())
                 .firstName(identity.getFirstName())
                 .lastName(identity.getLastName())
+                .isGuestAccount(identity.getIsGuestAccount())
                 .build();
     }
 }

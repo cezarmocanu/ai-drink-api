@@ -14,4 +14,5 @@ public class UserIdentityGetDTO {
     private String firstName;
     private String lastName;
     private String email;
+    private boolean isGuestAccount;
 }

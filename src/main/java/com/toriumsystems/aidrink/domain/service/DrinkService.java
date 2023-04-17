@@ -2,6 +2,7 @@ package com.toriumsystems.aidrink.domain.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.toriumsystems.aidrink.domain.dto.DrinkGetDTO;
@@ -17,7 +18,11 @@ public class DrinkService {
     private final DrinkRepository drinkRepository;
 
     public List<DrinkGetDTO> getAllDrinks() {
-        return mapDrinkListToGetDTO(drinkRepository.findAll());
+        var page = PageRequest.of(0, 20);
+        return drinkRepository
+                .findAll(page).get()
+                .map(this::mapDrinkToGetDTO)
+                .toList();
     }
 
     public List<DrinkGetDTO> mapDrinkListToGetDTO(List<Drink> list) {

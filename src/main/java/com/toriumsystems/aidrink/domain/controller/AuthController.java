@@ -2,27 +2,20 @@ package com.toriumsystems.aidrink.domain.controller;
 
 import java.util.HashMap;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.toriumsystems.aidrink.domain.dto.AuthNewIdentityDTO;
-import com.toriumsystems.aidrink.domain.dto.AuthSignupDTO;
+import com.toriumsystems.aidrink.domain.dto.AuthIdentityResponseDTO;
+import com.toriumsystems.aidrink.domain.dto.AuthIdentityRequestDTO;
 import com.toriumsystems.aidrink.domain.service.UserIdentityService;
-import com.toriumsystems.aidrink.identity.model.UserIdentity;
 import com.toriumsystems.aidrink.identity.model.UserIdentityDetails;
 import com.toriumsystems.aidrink.identity.service.JwtTokenService;
 
-import jakarta.annotation.security.PermitAll;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -37,20 +30,18 @@ public class AuthController {
     private UserIdentityService userIdentityService;
     private JwtTokenService jwtService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<AuthNewIdentityDTO> signUp(@Valid @RequestBody AuthSignupDTO dto) {
+    @PostMapping("/identity")
+    public ResponseEntity<AuthIdentityResponseDTO> signUp(@Valid @RequestBody AuthIdentityRequestDTO dto) {
         // TODO handle constraints exception with error
-        var identity = userIdentityService.createUser(dto);
-        var userDetails = UserIdentityDetails
-                .builder()
-                .identity(identity)
-                .build();
-        var token = jwtService.generateToken(new HashMap<>(), userDetails);
-        var responseDto = AuthNewIdentityDTO
-                .builder()
-                .identity(userIdentityService.mapUserIdentityToGetDTO(identity))
-                .token(token)
-                .build();
+        var identity = userIdentityService.findByEmail(dto.getId());
+
+        if (identity != null) {
+            var responseDto = userIdentityService.createNewIdentityDTO(identity);
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }
+
+        identity = userIdentityService.createUser(dto);
+        var responseDto = userIdentityService.createNewIdentityDTO(identity);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 

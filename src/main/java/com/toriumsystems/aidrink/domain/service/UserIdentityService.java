@@ -9,10 +9,9 @@ import org.springframework.stereotype.Service;
 import com.toriumsystems.aidrink.domain.dto.AuthIdentityResponseDTO;
 import com.toriumsystems.aidrink.domain.dto.AuthIdentityRequestDTO;
 import com.toriumsystems.aidrink.domain.dto.UserIdentityGetDTO;
-import com.toriumsystems.aidrink.domain.model.DrinkCollection;
 import com.toriumsystems.aidrink.domain.model.Profile;
-import com.toriumsystems.aidrink.domain.repository.DrinkCollectionRepository;
 import com.toriumsystems.aidrink.domain.repository.ProfileRepository;
+import com.toriumsystems.aidrink.domain.types.DrinkPageConfig;
 import com.toriumsystems.aidrink.identity.model.UserIdentity;
 import com.toriumsystems.aidrink.identity.model.UserIdentityDetails;
 import com.toriumsystems.aidrink.identity.repository.UserIdentityRepository;
@@ -26,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class UserIdentityService {
 
     private final UserIdentityRepository userIdentityRepository;
-    private final DrinkCollectionRepository drinkCollectionRepository;
+    // TODO add this to profile service
     private final ProfileRepository profileRepository;
     private final JwtTokenService jwtService;
     private final DrinkService drinkService;
@@ -57,16 +56,10 @@ public class UserIdentityService {
                 .build();
         var identity = userIdentityRepository.save(identityBuilder);
 
-        var drinkCollectionBuilder = DrinkCollection
-                .builder()
-                .build();
-        var drinkCollection = drinkCollectionRepository.save(drinkCollectionBuilder);
-
-        var initialPageIndex = random.nextInt(drinkService.getPagesCount(10));
+        var initialPageIndex = random.nextInt(drinkService.getPagesCount(DrinkPageConfig.PAGE_SIZE));
         var profileBuilder = Profile
                 .builder()
                 .identity(identity)
-                .drinkCollection(drinkCollection)
                 .currentPageIndex(initialPageIndex)
                 .initialPageIndex(initialPageIndex)
                 .build();

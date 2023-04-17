@@ -1,6 +1,6 @@
 package com.toriumsystems.aidrink.domain.types;
 
-public enum DrinkVote {
+public enum DrinkVoteValue {
     LIKE,
     DISLIKE
 }

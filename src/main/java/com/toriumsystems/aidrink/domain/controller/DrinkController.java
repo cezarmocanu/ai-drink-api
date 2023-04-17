@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.toriumsystems.aidrink.domain.dto.DrinkGetDTO;
-import com.toriumsystems.aidrink.domain.repository.ProfileRepository;
 import com.toriumsystems.aidrink.domain.service.DrinkService;
+import com.toriumsystems.aidrink.domain.service.ProfileService;
+import com.toriumsystems.aidrink.domain.types.DrinkPageConfig;
 import com.toriumsystems.aidrink.identity.annotations.IdentityId;
 
 import lombok.RequiredArgsConstructor;
@@ -20,12 +21,12 @@ import lombok.RequiredArgsConstructor;
 public class DrinkController {
 
     private final DrinkService drinkService;
-    private final ProfileRepository profileRepository;
+    private final ProfileService profileService;
 
     @GetMapping
     public ResponseEntity<List<DrinkGetDTO>> getAllDrinks(@IdentityId Long identityId) {
-        var profile = profileRepository.findByIdentityId(identityId);
+        var profile = profileService.findProfileByIdentityId(identityId);
         var pageIndex = profile.getCurrentPageIndex() != null ? profile.getCurrentPageIndex() : 0;
-        return ResponseEntity.ok(drinkService.getDrinksByPage(pageIndex, 10));
+        return ResponseEntity.ok(drinkService.getDrinksByPage(pageIndex, DrinkPageConfig.PAGE_SIZE));
     }
 }
